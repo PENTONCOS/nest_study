@@ -1,5 +1,24 @@
-<html>
-  <body>
-    恨少测试静态资源
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+</head>
+<body>
+    <script>
+        // async function urlParam() {
+        //     const res = await axios.get('/api/person/1111');
+        //     console.log(res);            
+        // }
+        // urlParam();
+        async function query() {
+            const res = await axios.get('/api/person/find', {
+                params: {
+                    name: 'jiapandong',
+                    age: 20
+                }
+            });
+            console.log(res);            
+        }
+        query();
+   </script>
+</body>
