@@ -5,6 +5,7 @@
     <script src="https://unpkg.com/qs@6.10.2/dist/qs.js"></script>
 </head>
 <body>
+    <input id="fileInput" type="file" multiple/>
     <script>
         // async function urlParam() {
         //     const res = await axios.get('/api/person/1111');
@@ -35,13 +36,30 @@
 
         // formUrlEncoded();
 
-        async function json() {
-            const res = await axios.post('/api/person', {
-                name: 'jiapandong',
-                age: 20
+        // async function json() {
+        //     const res = await axios.post('/api/person', {
+        //         name: 'jiapandong',
+        //         age: 20
+        //     });
+        //     console.log(res);     
+        // }
+        // json();
+
+        const fileInput = document.querySelector('#fileInput');
+
+        async function formData() {
+            const data = new FormData();
+            data.set('name','jiapandong');
+            data.set('age', 18);
+            data.set('file1', fileInput.files[0]);
+            data.set('file2', fileInput.files[1]);
+
+            const res = await axios.post('/api/person/file', data, {
+                headers: { 'content-type': 'multipart/form-data' }
             });
             console.log(res);     
         }
-        json();
+
+        fileInput.onchange = formData;
     </script>
 </body>
