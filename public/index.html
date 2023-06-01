@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/qs@6.10.2/dist/qs.js"></script>
 </head>
 <body>
     <script>
@@ -10,15 +11,37 @@
         //     console.log(res);            
         // }
         // urlParam();
-        async function query() {
-            const res = await axios.get('/api/person/find', {
-                params: {
-                    name: 'jiapandong',
-                    age: 20
-                }
+
+        // async function query() {
+        //     const res = await axios.get('/api/person/find', {
+        //         params: {
+        //             name: 'jiapandong',
+        //             age: 20
+        //         }
+        //     });
+        //     console.log(res);            
+        // }
+        // query();
+
+        // async function formUrlEncoded() {
+        //     const res = await axios.post('/api/person', Qs.stringify({
+        //         name: 'jiapandong',
+        //         age: 20
+        //     }), {
+        //         headers: { 'content-type': 'application/x-www-form-urlencoded' }
+        //     });
+        //     console.log(res);  
+        // }
+
+        // formUrlEncoded();
+
+        async function json() {
+            const res = await axios.post('/api/person', {
+                name: 'jiapandong',
+                age: 20
             });
-            console.log(res);            
+            console.log(res);     
         }
-        query();
-   </script>
+        json();
+    </script>
 </body>
