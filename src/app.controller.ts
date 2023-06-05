@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller()
+@Controller('person')
 export class AppController {
   // constructor(private readonly appService: AppService) { } // 构造器注入
 

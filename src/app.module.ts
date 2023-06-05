@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
@@ -67,4 +67,11 @@ import { Person4Module } from './person4/person4.module';
     }
   ]
 })
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(LoggerMiddleware) // 路由中间件
+//       .forRoutes('person')
+//   }
+// }
 export class AppModule { }

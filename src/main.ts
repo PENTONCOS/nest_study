@@ -6,11 +6,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/static' });
+  // app.use(logger) // 全局中间件
   await app.listen(3000);
 
-  setTimeout(() => {
-    // app.close() 只是触发销毁逻辑，但不会真正退出进程
-    app.close();
-  }, 3000)
+  // setTimeout(() => {
+  //   // app.close() 只是触发销毁逻辑，但不会真正退出进程
+  //   app.close();
+  // }, 3000)
 }
 bootstrap();
