@@ -41,3 +41,14 @@ Nest 里通过 `@Controller` 声明可以被注入的 `controller`，通过 `@In
 如果想起别名，可以用 `usExisting` 给已有的 `token`，指定一个新 `token`。
 
 灵活运用这些 `provider` 类型，就可以利用 Nest 的 IOC 容器中注入任何对象。
+
+## 4. 全局模块和生命周期
+模块可以通过 `@Global` 声明为全局的，这样它 `exports` 的 `provider` 就可以在各处使用了，不需要 `imports`。
+
+`provider`、`controller`、`module` 都支持启动和销毁的生命周期函数，这些生命周期函数都支持 `async` 的方式。
+
+可以在其中做一些初始化、销毁的逻辑，比如 `onApplicationShutwon` 里通过 `moduleRef.get` 取出一些 `provider`，执行关闭连接等销毁逻辑。
+
+![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cd793a59d8a24b3e86312746c25eeb32~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
+
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5bb1ccd84fb14e638274df35198c3cff~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
