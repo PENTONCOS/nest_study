@@ -6,7 +6,7 @@ import { Person2Module } from './person2/person2.module';
 
 @Module({
   // imports: [PersonModule],
-  imports: [Person2Module],
+  imports: [PersonModule, Person2Module],
   controllers: [AppController],
   // providers: [AppService],
 
