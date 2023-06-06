@@ -1,13 +1,16 @@
-import { Controller, Get, Inject, SetMetadata, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, SetMetadata, UseFilters, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CustomDecoratorGuard } from './custom_decorator.guard';
 import { CustomDecorator } from './custom_decorator.decorator';
 import { Custom2Decorator } from './custom2_decorator.decorator';
 import { MyQuery } from './myQuery.decorator';
 import { ClassCustomDecorator } from './class_custom_decorator.decorator';
+import { CustomException } from './CustomException';
+import { CustomFilterFilter } from './custom_filter.filter';
+import { CustomGuardGuard } from './custom_guard.guard';
 
-// @Controller('person')
-@ClassCustomDecorator()
+@Controller('person')
+// @ClassCustomDecorator() // 自定义 class 装饰器
 export class AppController {
   // constructor(private readonly appService: AppService) { } // 构造器注入
 
@@ -22,7 +25,6 @@ export class AppController {
     @Inject('person4') private readonly person4: { name: string, dec: string },
     @Inject('person5') private readonly person5: { name: string, dec: string },
   ) { }
-
 
   @Get()
   @SetMetadata('custom_decorator', 'admin')
@@ -47,6 +49,14 @@ export class AppController {
   @Get('hello4')
   getHello4(@MyQuery('name') name: string): string {  // @MyQuery 为自定义参数装饰器
     console.log('name', name)
+    return this.appService.getHello();
+  }
+
+  @Get('hello5')
+  @UseFilters(CustomFilterFilter) // 自定义异常捕获
+  @UseGuards(CustomGuardGuard) // 自定义 guard
+  getHello5(): string {
+    throw new CustomException('aaa', 'bbb')
     return this.appService.getHello();
   }
 }

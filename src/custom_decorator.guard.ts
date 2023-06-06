@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class CustomDecoratorGuard implements CanActivate {
-  @Inject(Reflector)
+  @Inject(Reflector)  // Nest 注入 reflector，不需要在模块的 provider 声明
   private reflector: Reflector;
 
   canActivate(

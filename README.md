@@ -279,3 +279,16 @@ handler 默认返回的是 200 的状态码，你可以通过 @HttpCode 修改�
 还可以通过 `createParamDecorator` 来创建**参数装饰器**，它能拿到 `ExecutionContext`，进而拿到 reqeust、response，可以实现很多内置装饰器的功能，比如 `@Query`、`@Headers` 等装饰器。
 
 通过自定义方法和参数的装饰器，可以让 Nest 代码更加的灵活。
+
+## ExecutionContext 切换不同上下文
+
+为了让 `Filter`、`Guard`、`Exception`、`Filter` 支持 http、ws、rpc 等场景下复用，Nest 设计了 `ArgumentHost` 和 `ExecutionContext` 类。
+
+`ArgumentHost` 可以通过 `getArgs` 或者 `getArgByIndex` 拿到上下文参数，比如 request、response、next 等。
+
+更推荐的方式是根据 `getType` 的结果分别 `switchToHttp`、`switchToWs`、`swtichToRpc`，然后再取对应的 argument。
+
+而 `ExecutionContext` 还提供 `getClass`、`getHandler` 方法，可以结合 `reflector` 来取出其中的 `metadata`。
+
+
+guard、interceptor、middleware、pipe、filter 都是 Nest 的特殊 class，当你通过 @UseXxx 使用它们的时候，Nest 就会扫描到它们，创建对象它们的对象加到容器里，就已经可以注入依赖了。
