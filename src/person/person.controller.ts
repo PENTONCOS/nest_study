@@ -1,12 +1,66 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFiles, HostParam, Req, Res, Next, HttpCode, Header, Redirect, Render } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { PersonService } from './person.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 
-@Controller('api/person')
+// @Controller('api/person')
+@Controller({ host: ':host.0.0.1', path: 'aaa' }) // controller 除了可以指定某些 path 生效外，还可以指定 host：
 export class PersonController {
   constructor(private readonly personService: PersonService) { }
+
+  @Get('bbb')
+  hello(@HostParam('host') host: number) {
+    return host;
+  }
+
+  @Get('ccc')
+  ccc(@Req() req: Request) {
+    // console.log(req)
+  }
+
+  @Get('ddd')
+  ddd(@Res() res: Response) {
+    return res.end('henshao dddd') // Nest 这么设计是为了避免你自己返回的响应和 Nest 返回的响应的冲突。
+  }
+
+  @Get('eee')
+  eee(@Res({ passthrough: true }) res: Response) { // 如果你不会自己返回响应，可以通过 passthrough 参数告诉 Nest
+    return 'henshao eeee'
+  }
+
+  @Get('fff')
+  fff(@Next() nest: NextFunction) {
+    console.log('hander1');
+    nest();
+    return '111';
+  }
+
+  @Get('fff')
+  fff2() {
+    console.log('hander2');
+    return 'fff';
+  }
+
+  @Get('ggg')
+  @HttpCode(233)
+  @Header('name', 'jiapandong')
+  ggg() {
+    return 'ggg';
+  }
+
+  @Get('hhh')
+  @Redirect('https://blog.csdn.net/Pentoncos')
+  hhh() {
+
+  }
+
+  @Get('user')
+  @Render('user')
+  user() {
+    return { name: 'jiapandong', age: 20 }
+  }
 
 
   // 1. url query
@@ -46,6 +100,8 @@ export class PersonController {
     console.log(files);
     return `received: ${JSON.stringify(createPersonDto)}`
   }
+
+
 
 
 
