@@ -266,7 +266,7 @@ handler 默认返回的是 200 的状态码，你可以通过 @HttpCode 修改�
 指定渲染用的模版引擎
 
 
-## 如何自定义装饰器
+## 7. 如何自定义装饰器
 
 内置装饰器不够用的时候，或者想把多个装饰器合并成一个的时候，都可以自定义装饰器。
 
@@ -280,7 +280,7 @@ handler 默认返回的是 200 的状态码，你可以通过 @HttpCode 修改�
 
 通过自定义方法和参数的装饰器，可以让 Nest 代码更加的灵活。
 
-## ExecutionContext 切换不同上下文
+## 8. ExecutionContext 切换不同上下文
 
 为了让 `Filter`、`Guard`、`Exception`、`Filter` 支持 http、ws、rpc 等场景下复用，Nest 设计了 `ArgumentHost` 和 `ExecutionContext` 类。
 
@@ -293,7 +293,7 @@ handler 默认返回的是 200 的状态码，你可以通过 @HttpCode 修改�
 
 guard、interceptor、middleware、pipe、filter 都是 Nest 的特殊 class，当你通过 @UseXxx 使用它们的时候，Nest 就会扫描到它们，创建对象它们的对象加到容器里，就已经可以注入依赖了。
 
-## Nest的实现的核心： Metadata 和 Reflector
+## 9. Nest的实现的核心： Metadata 和 Reflector
 
 Nest 的装饰器的实现原理就是 `Reflect.getMetadata`、`Reflect.defineMetadata` 这些 api。通过在 class、method 上添加 `metadata`，然后扫描到它的时候取出 `metadata` 来做相应的处理来完成各种功能。
 
@@ -304,3 +304,11 @@ Nest 的 `Controller`、`Module`、`Service` 等等所有的装饰器都是通�
 当然，`reflect metadata` 的 api 还在**草案**阶段，需要引入 `refelect-metadata` 的包做 `polyfill`。
 
 Nest 还提供了 `@SetMetadata` 的装饰器，可以在 `controller` 的 `class` 和 `method` 上添加 `metadata`，然后在 `interceptor` 和 `guard` 里通过 `reflector` 的 api 取出来。
+
+## 10. Module 和 Provider的循环依赖如何解决？
+
+Module 之间可以相互 `imports`，`Provider` 之间可以相互注入，这两者都会形成循环依赖。
+
+解决方式就是两边都用 `forwardRef` 来包裹下。
+
+它的原理就是 nest 会先创建 `Module`、`Provider`，之后再把**引用**转发到对方，也就是 `forward ref`。

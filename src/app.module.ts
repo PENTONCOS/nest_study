@@ -5,10 +5,13 @@ import { PersonModule } from './person/person.module';
 import { Person2Module } from './person2/person2.module';
 import { Person3Module } from './person3/person3.module';
 import { Person4Module } from './person4/person4.module';
+import { ModuleTestBModule } from './module-test-b/module-test-b.module';
+import { ServiceTestBService } from './service-test-b/service-test-b.service';
+import { ServiceTestAService } from './service-test-a/service-test-a.service';
 
 @Module({
   // imports: [PersonModule],
-  imports: [PersonModule, Person2Module, Person3Module, Person4Module],
+  imports: [PersonModule, Person2Module, Person3Module, Person4Module, ModuleTestBModule],
   controllers: [AppController],
   // providers: [AppService],
 
@@ -64,7 +67,9 @@ import { Person4Module } from './person4/person4.module';
     {
       provide: 'person5', // 通过 useExisting 来指定别名
       useExisting: 'person2' // 这里就是给 person2 的 token 的 provider 起个新的 token 叫做 person5。
-    }
+    },
+    ServiceTestBService,
+    ServiceTestAService
   ]
 })
 // export class AppModule implements NestModule {
