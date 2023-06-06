@@ -5,21 +5,21 @@ import { UpdatePerson4Dto } from './dto/update-person4.dto';
 @Injectable()
 export class Person4Service implements OnModuleInit, OnApplicationBootstrap, OnModuleDestroy, BeforeApplicationShutdown, OnApplicationShutdown {
   onModuleDestroy() {
-    console.log('Person4Service onModuleDestroy');
+    // console.log('Person4Service onModuleDestroy');
   }
 
   beforeApplicationShutdown(signal: string) {
-    console.log('Person4Service beforeApplicationShutdown', signal);
+    // console.log('Person4Service beforeApplicationShutdown', signal);
   }
 
   onApplicationShutdown() {
-    console.log('Person4Service onApplicationShutdown');
+    // console.log('Person4Service onApplicationShutdown');
   }
   onModuleInit() {
-    console.log('Person4Service onModuleInit')
+    // console.log('Person4Service onModuleInit')
   }
   onApplicationBootstrap() {
-    console.log('Person4Service onApplicationBootstrap')
+    // console.log('Person4Service onApplicationBootstrap')
   }
 
   create(createPerson4Dto: CreatePerson4Dto) {

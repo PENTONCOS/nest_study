@@ -9,20 +9,20 @@ import { Person4Controller } from './person4.controller';
 export class Person4Module implements OnModuleInit, OnApplicationBootstrap, OnModuleDestroy, BeforeApplicationShutdown, OnApplicationShutdown {
 
   onModuleDestroy() {
-    console.log('Person4Module onModuleDestroy');
+    // console.log('Person4Module onModuleDestroy');
   }
 
   beforeApplicationShutdown(signal: string) {
-    console.log('Person4Module beforeApplicationShutdown', signal);
+    // console.log('Person4Module beforeApplicationShutdown', signal);
   }
 
   onApplicationShutdown() {
-    console.log('Person4Module onApplicationShutdown');
+    // console.log('Person4Module onApplicationShutdown');
   }
   onModuleInit() {
-    console.log('Person4Module onModuleInit')
+    // console.log('Person4Module onModuleInit')
   }
   onApplicationBootstrap() {
-    console.log('Person4Module onApplicationBootstrap')
+    // console.log('Person4Module onApplicationBootstrap')
   }
 }

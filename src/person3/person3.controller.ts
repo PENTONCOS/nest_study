@@ -9,22 +9,22 @@ export class Person3Controller implements OnModuleInit, OnApplicationBootstrap, 
 
 
   onModuleDestroy() {
-    console.log('Person3Controller onModuleDestroy');
+    // console.log('Person3Controller onModuleDestroy');
   }
 
   beforeApplicationShutdown(signal: string) {
-    console.log('Person3Controller beforeApplicationShutdown', signal);
+    // console.log('Person3Controller beforeApplicationShutdown', signal);
   }
 
   onApplicationShutdown() {
-    console.log('Person3Controller onApplicationShutdown');
+    // console.log('Person3Controller onApplicationShutdown');
   }
 
   onModuleInit() {
-    console.log('Person3Controller onModuleInit')
+    // console.log('Person3Controller onModuleInit')
   }
   onApplicationBootstrap() {
-    console.log('Person3Controller onApplicationBootstrap')
+    // console.log('Person3Controller onApplicationBootstrap')
   }
 
 

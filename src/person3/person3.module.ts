@@ -14,18 +14,18 @@ export class Person3Module implements OnModuleInit, OnApplicationBootstrap, OnMo
   }
 
   beforeApplicationShutdown(signal: string) {
-    console.log('Person3Module beforeApplicationShutdown', signal);
+    // console.log('Person3Module beforeApplicationShutdown', signal);
   }
 
   onApplicationShutdown() {
     const person3Service = this.moduleRef.get<Person3Service>(Person3Service) // 这里的 moduleRef 就是当前模块的对象。
-    console.log('----------------', person3Service.findAll())
-    console.log('Person3Module onApplicationShutdown');
+    // console.log('----------------', person3Service.findAll())
+    // console.log('Person3Module onApplicationShutdown');
   }
   onModuleInit() {
-    console.log('Person3Module onModuleInit')
+    // console.log('Person3Module onModuleInit')
   }
   onApplicationBootstrap() {
-    console.log('Person3Module onApplicationBootstrap')
+    // console.log('Person3Module onApplicationBootstrap')
   }
 }

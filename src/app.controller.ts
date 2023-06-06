@@ -1,7 +1,13 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, SetMetadata, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CustomDecoratorGuard } from './custom_decorator.guard';
+import { CustomDecorator } from './custom_decorator.decorator';
+import { Custom2Decorator } from './custom2_decorator.decorator';
+import { MyQuery } from './myQuery.decorator';
+import { ClassCustomDecorator } from './class_custom_decorator.decorator';
 
-@Controller('person')
+// @Controller('person')
+@ClassCustomDecorator()
 export class AppController {
   // constructor(private readonly appService: AppService) { } // 构造器注入
 
@@ -19,8 +25,28 @@ export class AppController {
 
 
   @Get()
+  @SetMetadata('custom_decorator', 'admin')
+  @UseGuards(CustomDecoratorGuard)
   getHello(): string {
     console.log(this.person3)
+    return this.appService.getHello();
+  }
+
+  @Get('hello2')
+  @CustomDecorator('admin2') // 自定义方法装饰器
+  @UseGuards(CustomDecoratorGuard)
+  getHello2(): string {
+    return this.appService.getHello();
+  }
+
+  @Custom2Decorator('hello3', 'admin3') // 合并多个方法装饰器
+  getHello3(): string {
+    return this.appService.getHello();
+  }
+
+  @Get('hello4')
+  getHello4(@MyQuery('name') name: string): string {  // @MyQuery 为自定义参数装饰器
+    console.log('name', name)
     return this.appService.getHello();
   }
 }

@@ -6,21 +6,21 @@ import { UpdatePerson3Dto } from './dto/update-person3.dto';
 export class Person3Service implements OnModuleInit, OnApplicationBootstrap, OnModuleDestroy, BeforeApplicationShutdown, OnApplicationShutdown {
 
   onModuleDestroy() {
-    console.log('Person3Service onModuleDestroy');
+    // console.log('Person3Service onModuleDestroy');
   }
 
   beforeApplicationShutdown(signal: string) {
-    console.log('Person3Service beforeApplicationShutdown', signal);
+    // console.log('Person3Service beforeApplicationShutdown', signal);
   }
 
   onApplicationShutdown() {
-    console.log('Person3Service onApplicationShutdown');
+    // console.log('Person3Service onApplicationShutdown');
   }
   onModuleInit() {
-    console.log('Person3Service onModuleInit')
+    // console.log('Person3Service onModuleInit')
   }
   onApplicationBootstrap() {
-    console.log('Person3Service onApplicationBootstrap')
+    // console.log('Person3Service onApplicationBootstrap')
   }
 
   create(createPerson3Dto: CreatePerson3Dto) {

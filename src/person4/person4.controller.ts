@@ -8,22 +8,22 @@ export class Person4Controller implements OnModuleInit, OnApplicationBootstrap, 
   constructor(private readonly person4Service: Person4Service) { }
 
   onModuleDestroy() {
-    console.log('Person4Controller onModuleDestroy');
+    // console.log('Person4Controller onModuleDestroy');
   }
 
   beforeApplicationShutdown(signal: string) {
-    console.log('Person4Controller beforeApplicationShutdown', signal);
+    // console.log('Person4Controller beforeApplicationShutdown', signal);
   }
 
   onApplicationShutdown() {
-    console.log('Person4Controller onApplicationShutdown');
+    // console.log('Person4Controller onApplicationShutdown');
   }
 
   onModuleInit() {
-    console.log('Person4Controller onModuleInit')
+    // console.log('Person4Controller onModuleInit')
   }
   onApplicationBootstrap() {
-    console.log('Person4Controller onApplicationBootstrap')
+    // console.log('Person4Controller onApplicationBootstrap')
   }
 
   @Post()
