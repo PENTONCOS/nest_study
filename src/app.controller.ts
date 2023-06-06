@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, SetMetadata, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, SetMetadata, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CustomDecoratorGuard } from './custom_decorator.guard';
 import { CustomDecorator } from './custom_decorator.decorator';
@@ -8,9 +8,11 @@ import { ClassCustomDecorator } from './class_custom_decorator.decorator';
 import { CustomException } from './CustomException';
 import { CustomFilterFilter } from './custom_filter.filter';
 import { CustomGuardGuard } from './custom_guard.guard';
+import { CustomInterceptorInterceptor } from './custom_intercept.intercept';
 
 @Controller('person')
 // @ClassCustomDecorator() // 自定义 class 装饰器
+@SetMetadata('roles', ['user'])
 export class AppController {
   // constructor(private readonly appService: AppService) { } // 构造器注入
 
@@ -57,6 +59,14 @@ export class AppController {
   @UseGuards(CustomGuardGuard) // 自定义 guard
   getHello5(): string {
     throw new CustomException('aaa', 'bbb')
+    return this.appService.getHello();
+  }
+
+  @Get('hello6')
+  @UseGuards(CustomGuardGuard) // 自定义 guard
+  @UseInterceptors(CustomInterceptorInterceptor) // 自定义 interceptor
+  @SetMetadata('roles', ['admin'])
+  getHello6(): string {
     return this.appService.getHello();
   }
 }

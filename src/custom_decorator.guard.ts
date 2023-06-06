@@ -11,7 +11,7 @@ export class CustomDecoratorGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
 
-    console.log(this.reflector.get('custom_decorator', context.getHandler()));
+    console.log(this.reflector.get('custom_decorator', context.getHandler())); // 通过 ExecutationContext 取到目标 handler，然后注入 reflector，通过 reflector.get 取出 handler 上的 metadata。
 
     return true;
   }
