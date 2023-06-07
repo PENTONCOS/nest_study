@@ -312,3 +312,23 @@ Module 之间可以相互 `imports`，`Provider` 之间可以相互注入，这�
 解决方式就是两边都用 `forwardRef` 来包裹下。
 
 它的原理就是 nest 会先创建 `Module`、`Provider`，之后再把**引用**转发到对方，也就是 `forward ref`。
+
+## 10. 创建动态模块
+
+`Module` 可以传入 `options` 动态产生，这叫做动态 `Module`，你还可以把传入的 `options` 作为 `provider` 注入到别的对象里。
+
+建议的动态产生 Module 的方法名有 `register`、`forRoot`、`forFeature` 3种。
+
+- `register`：用一次注册一次
+
+- `forRoot`：只注册一次，用多次
+
+- `forFeature`：用了 `forRoot` 之后，用 `forFeature` 传入局部配置
+
+并且这些方法都可以写 `xxxAsync` 版本，也就是传入 `useFactory` 等 `option`，内部注册异步 `provider`。
+
+这个过程也可以用 `ConfigurableModuleBuilder` 来生成。通过 `setClassMethodName` 设置方法名，通过 `setExtras` 设置额外的 `options` 处理逻辑。
+
+并且返回的 `class` 都有 `xxxAsync` 的版本。
+
+这就是**动态模块**的定义方式，后面用到 `typeorm`、`mongoose` 等模块会大量见到这种模块。

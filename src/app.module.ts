@@ -8,10 +8,25 @@ import { Person4Module } from './person4/person4.module';
 import { ModuleTestBModule } from './module-test-b/module-test-b.module';
 import { ServiceTestBService } from './service-test-b/service-test-b.service';
 import { ServiceTestAService } from './service-test-a/service-test-a.service';
+import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
+import { DynamicModule2Module } from './dynamic-module2/dynamic-module2.module';
 
 @Module({
   // imports: [PersonModule],
-  imports: [PersonModule, Person2Module, Person3Module, Person4Module, ModuleTestBModule],
+  imports: [
+    PersonModule,
+    Person2Module, Person3Module,
+    Person4Module,
+    ModuleTestBModule,
+    DynamicModuleModule.register({ // 动态模块引入方法
+      name: 'jiapandong',
+      age: 20
+    }),
+    DynamicModule2Module.register({
+      name: 'henshao',
+      age: 18,
+    })
+  ],
   controllers: [AppController],
   // providers: [AppService],
 
