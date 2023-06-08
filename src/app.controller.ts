@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, SetMetadata, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Get, HttpException, HttpStatus, Inject, Param, ParseArrayPipe, ParseBoolPipe, ParseEnumPipe, ParseFloatPipe, ParseIntPipe, ParseUUIDPipe, Query, SetMetadata, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CustomDecoratorGuard } from './custom_decorator.guard';
 import { CustomDecorator } from './custom_decorator.decorator';
@@ -9,6 +9,14 @@ import { CustomException } from './CustomException';
 import { CustomFilterFilter } from './custom_filter.filter';
 import { CustomGuardGuard } from './custom_guard.guard';
 import { CustomInterceptorInterceptor } from './custom_intercept.intercept';
+import { CustomPipePipe } from './custom_pipe.pipe';
+
+
+enum Ggg {
+  AAA = '111',
+  BBB = '222',
+  CCC = '333'
+}
 
 @Controller('person')
 // @ClassCustomDecorator() // 自定义 class 装饰器
@@ -68,5 +76,72 @@ export class AppController {
   @SetMetadata('roles', ['admin'])
   getHello6(): string {
     return this.appService.getHello();
+  }
+
+  @Get()
+  asd(@Query('aa', ParseIntPipe) aa: string): string {
+    return aa + 1;
+  }
+
+  @Get('aa')
+  aa(@Query('aa', new ParseIntPipe({
+    errorHttpStatusCode: HttpStatus.NOT_FOUND
+  })) aa: string): string {
+    return aa + 1;
+  }
+
+  @Get('bb')
+  bb(@Query('aa', new ParseIntPipe({
+    exceptionFactory: (msg) => {
+      console.log(msg);
+      throw new HttpException('xxx ' + msg, HttpStatus.NOT_IMPLEMENTED)
+    }
+  })) aa: string): string {
+    return aa + 1;
+  }
+
+  @Get('cc')
+  cc(@Query('cc', ParseFloatPipe) cc: number) {
+    return cc + 1;
+  }
+
+  @Get('dd')
+  dd(@Query('dd', ParseBoolPipe) dd: boolean) {
+    return typeof dd
+  }
+
+  @Get('ee')
+  ee(@Query('ee', new ParseArrayPipe({
+    items: Number
+  })) ee: Array<number>) {
+    return ee.reduce((total, item) => total + item, 0)
+  }
+
+  @Get('ff')
+  ff(@Query('ff', new ParseArrayPipe({
+    separator: '..',
+    optional: true
+  })) ff: Array<string>) {
+    return ff;
+  }
+
+  @Get('gg/:enum')
+  gg(@Param('enum', new ParseEnumPipe(Ggg)) e: Ggg) {
+    return e;
+  }
+
+  @Get('hh/:uuid')
+  hh(@Param('uuid', new ParseUUIDPipe()) uuid: string) {
+    return uuid;
+  }
+
+  @Get('kkk')
+  kkk(@Query('kkk', new DefaultValuePipe('aaa')) kkk: string) {
+    return kkk;
+  }
+
+  @Get('hello7/:bbb')
+  getHello7(@Query('aaa', CustomPipePipe) aaa: string, @Param('bbb', CustomPipePipe) bbb: number) {
+    return aaa + bbb;
   }
 }

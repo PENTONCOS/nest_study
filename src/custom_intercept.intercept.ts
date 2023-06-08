@@ -18,6 +18,6 @@ export class CustomInterceptorInterceptor implements NestInterceptor {
     console.log('getAllAndMerge', this.reflector.getAllAndMerge('roles', [context.getHandler(), context.getClass()]));
     console.log('getAllAndOverride', this.reflector.getAllAndOverride('roles', [context.getHandler(), context.getClass()]));
 
-    return next.handle();
+    return next.handle(); // 调用 controller的对应方法
   }
 }

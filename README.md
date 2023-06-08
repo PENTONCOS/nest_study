@@ -377,6 +377,14 @@ nest 的 `interceptor` 就用了 `rxjs` 来处理响应，但常用的 `operator
 
 全局 `interceptor` 可以通过 `APP_INTERCEPTOR` 的 `token` 声明，这种能注入依赖，比 `app.useGlobalInterceptors` 更好。
 
-## 15. 
+## 15. 内置 Pipe 和自定义 Pipe
+
+`Pipe` 是在参数传给 `handler` 之前做一些验证和转换的，有 `9` 个内置的 `Pipe` 可以直接用: `ParseIntPipe`、`ParseBoolPipe`、`ParseArrayPipe`、`ParseUUIDPipe`、`ParseEnumPipe`、`ParseFloatPipe`、`DefaultValuePipe`、`ValidationPipe` 、`ParseFilePipe`。
+
+自己写一个 `pipe` 也很简单，就是实现 `PipeTransform` 接口的 `transform` 方法，它的返回值就是传给 `handler` 的值。
+
+在 `pipe` 里可以拿到装饰器和 `handler` 参数的各种信息，基于这些来实现校验和转换就是很简单的事情了。
+
+
 
 
