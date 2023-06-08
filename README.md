@@ -484,4 +484,20 @@ CMD ["http-server", "-p", "8080"]
 
 此外，`多阶段构建`也能减小镜像体积，也就是 `build` 一个镜像、`production` 一个镜像，最终保留下 `production` 的镜像。
 
+### docker 的实现
+
+Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS` 这三种机制。
+
+- `Namespace`：做资源隔离。
+- `Control Group`：做容器的资源限制。
+- `UnionFS`：做文件系统的镜像存储、镜像合并。
+
+我们通过 `dockerfile` 描述镜像构建的过程，每一条指令都是一个镜像层。
+
+镜像通过 `docker run` 就可以跑起来，对外提供服务，这时会添加一个`可写层（容器层）`。
+
+挂载一个 `volume` 数据卷到 `Docker` 容器，就可以实现数据的持久化。
+
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aecb63016ab45c0bc2603071b65a420~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
+
 
