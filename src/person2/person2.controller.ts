@@ -1,15 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } from '@nestjs/common';
 import { Person2Service } from './person2.service';
 import { CreatePerson2Dto } from './dto/create-person2.dto';
 import { UpdatePerson2Dto } from './dto/update-person2.dto';
 
 @Controller('person2')
 export class Person2Controller {
-  constructor(private readonly person2Service: Person2Service) {}
+  constructor(private readonly person2Service: Person2Service) { }
 
-  @Post()
-  create(@Body() createPerson2Dto: CreatePerson2Dto) {
-    return this.person2Service.create(createPerson2Dto);
+  @Post('ooo')
+  create(@Body(new ValidationPipe()) createPerson2Dto: CreatePerson2Dto) {
+    console.log('createPerson2Dto', createPerson2Dto)
+    // return this.person2Service.create(createPerson2Dto);
   }
 
   @Get()
