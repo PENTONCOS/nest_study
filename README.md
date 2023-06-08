@@ -313,7 +313,7 @@ Module 之间可以相互 `imports`，`Provider` 之间可以相互注入，这�
 
 它的原理就是 nest 会先创建 `Module`、`Provider`，之后再把**引用**转发到对方，也就是 `forward ref`。
 
-## 10. 创建动态模块
+## 11. 创建动态模块
 
 `Module` 可以传入 `options` 动态产生，这叫做动态 `Module`，你还可以把传入的 `options` 作为 `provider` 注入到别的对象里。
 
@@ -332,3 +332,14 @@ Module 之间可以相互 `imports`，`Provider` 之间可以相互注入，这�
 并且返回的 `class` 都有 `xxxAsync` 的版本。
 
 这就是**动态模块**的定义方式，后面用到 `typeorm`、`mongoose` 等模块会大量见到这种模块。
+
+## 12. Nest 和 Express 的关系，如何切到fastify
+
+`express` 是基于中间件的洋葱模型处理请求、响应的库，它并没有提供组织代码的架构特性，代码可以写的很随意。
+
+而为了更好的可维护性，我们都会用 `Nest` 这种一站式企业级开发框架。就像 `java` 里会用 `Spring` 框架一样。
+
+`Nest` 底层是 `express` 但也不完全是，它内部实现是基于 `interface` 的，而且提供了 `@nestjs/platform-express`、`@nestjs/platform-fastify` 这两个 `adapter` 包。
+
+这样就可以轻松的切换 `express`、`fastify` 或者其他的 `http` 请求处理的库。
+
