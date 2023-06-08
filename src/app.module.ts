@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
@@ -10,6 +10,7 @@ import { ServiceTestBService } from './service-test-b/service-test-b.service';
 import { ServiceTestAService } from './service-test-a/service-test-a.service';
 import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { DynamicModule2Module } from './dynamic-module2/dynamic-module2.module';
+import { CustomMiddlewareMiddleware } from './custom_middleware.middleware';
 
 @Module({
   // imports: [PersonModule],
@@ -94,4 +95,10 @@ import { DynamicModule2Module } from './dynamic-module2/dynamic-module2.module';
 //       .forRoutes('person')
 //   }
 // }
-export class AppModule { }
+export class AppModule implements NestModule {
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CustomMiddlewareMiddleware).forRoutes({ path: 'user*', method: RequestMethod.GET });
+    consumer.apply(CustomMiddlewareMiddleware).forRoutes({ path: 'person2', method: RequestMethod.GET });
+  }
+}
