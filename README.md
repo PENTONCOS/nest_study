@@ -437,7 +437,7 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 
 你可以把这个`自定义 Logger` 封装到**全局模块**，或者**动态模块**里。
 
-## dockerfile
+## 18. Dockerfile
 
 ```dockerfile
 FROM node:latest
@@ -446,7 +446,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm config set registry registry.npmmirror.com
+RUN npm config set registry https://registry.npmmirror.com
 
 RUN npm install -g http-server
 
@@ -475,5 +475,13 @@ CMD ["http-server", "-p", "8080"]
 通过 `EXPOSE` 指定要暴露的端口
 
 `CMD` 指定容器跑起来之后执行的命令，这里就是执行 http-server 把服务跑起来。
+
+### Nest 项目如何编写 Dockerfile
+
+`docker build` 的时候会把构建上下文的所有文件打包发送给 `docker daemon` 来构建镜像。
+
+可以通过 `.dockerignore` 指定哪些文件不发送，这样能加快构建时间，减小镜像体积。
+
+此外，`多阶段构建`也能减小镜像体积，也就是 `build` 一个镜像、`production` 一个镜像，最终保留下 `production` 的镜像。
 
 
