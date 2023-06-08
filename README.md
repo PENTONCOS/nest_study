@@ -70,6 +70,8 @@ Nest 就是通过这种 `AOP` 的架构方式，实现了松耦合、易于维�
 
 > Middleware(最外层) =>Guard(判断路由有没有权限访问) =>ExceptionFilter(异常都会被 ExceptionFilter 处理，返回不同的响应) =>Interceptor(Contoller 前后扩展一些逻辑) =>Pipe(对参数做检验和转换)
 
+![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24060e0f32204907887ede38c1aa018c~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
+
 ![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0fc2dc8038a04200a631ef3643858279~tplv-k3u1fbpfcp-zoom-1.awebp?)
 
 ## 6. 装饰器总览
@@ -399,6 +401,19 @@ nest 的 `interceptor` 就用了 `rxjs` 来处理响应，但常用的 `operator
 
 `class-validator` 支持很多种验证规则，比如邮箱、域名、长度、值的范围等，而且错误消息也可以自定义。
 
+## 16. 使用 multer 实现文件上传
+
+### Express 如何使用 multer 实现文件上传
+
+`express` 的 `multer` 包是用来处理 `multipart/form-data` 格式的文件上传请求的。
+
+通过 `single` 方法处理单个字段的单个文件，`array` 方法处理单个字段的多个文件，`fields` 方法处理多个字段的文件，any 处理任意数量字段的文件，分别用 `req.file` 和 `req.files` 来取解析出的文件。
+
+其余非文件字段不会处理，还是通过 `req.body` 来取。
+
+类似文件数量过多等错误，会抛出对应的 `error` 对象，在错误处理中间件里处理并返回对应的响应就好了。
+
+Nest 的文件上传就是通过 `multer` 包实现的。
 
 
 
