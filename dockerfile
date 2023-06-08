@@ -24,7 +24,9 @@ WORKDIR /app
 
 RUN npm install --production
 
+RUN npm install pm2 -g
+
 # Nest 服务需要在3000端口
 EXPOSE 3000
 
-CMD [ "node", "/app/main.js" ]
+CMD [ "pm2-runtime", "/app/main.js" ]

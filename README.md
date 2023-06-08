@@ -500,4 +500,18 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aecb63016ab45c0bc2603071b65a420~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
 
+## 19. 为什么还需要pm2来跑node应用
+
+服务器上的 node 应用需要用 `pm2` 的**日志管理**、**进程管理**、**负载均衡**、**性能监控**等功能。
+
+分别对应 **pm2 logs**、**pm2 start/restart/stop/delete**、**pm2 start -i**、**pm2 monit** 等命令。
+
+多个应用或者想把启动选项保存下来的时候，可以通过 `ecosystem.config.js` 配置文件，批量启动一系列应用。
+
+把 `docker` 和 `pm2` 结合起来，在进程崩溃的时候让 `pm2` 来自动重启。
+
+只要写 `dockerfile` 的时候多安装一个 `pm2` 的依赖，然后把 `node` 换成 `p2-runtime` 就好了。
+
+不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
+
 
