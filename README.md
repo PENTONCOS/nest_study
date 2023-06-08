@@ -427,7 +427,53 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 
 并且这个过程还可以使用 `ParseFilePipe` 来做文件的验证，它内置了 `MaxFileSizeValidator`、`FileTypeValidator`，你也可以实现自己的 `FileValidator`。
 
+## 17. 日志打印
 
+日志打印可以用 Nest 的 `Logger`，它支持在创建应用的时候指定 `logger` 是否开启，打印的日志级别，还可以`自定义 logger`。
 
+`自定义 Logger` 需要实现 `LoggerService` 接口，或者继承 `ConsoleLogger` 然后重写部分方法。
+
+如果想在 `Logger` 注入一些 `provider`，就需要创建应用时设置 `bufferLogs` 为 `true`，然后用 `app.useLogger(app.get(xxxLogger))` 来指定` Logger`。
+
+你可以把这个`自定义 Logger` 封装到**全局模块**，或者**动态模块**里。
+
+## dockerfile
+
+```dockerfile
+FROM node:latest
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm config set registry registry.npmmirror.com
+
+RUN npm install -g http-server
+
+EXPOSE 8080
+
+CMD ["http-server", "-p", "8080"]
+```
+
+这些指令的含义如下：
+
+- FROM：基于一个基础镜像来修改
+- WORKDIR：指定当前工作目录
+- COPY：把容器外的内容复制到容器内
+- EXPOSE：声明当前容器要访问的网络端口，比如这里起服务会用到 8080
+- RUN：在容器内执行命令
+- CMD：容器启动的时候执行的命令
+
+我们先通过 `FROM` 继承了 node 基础镜像，里面就有 npm、node 这些命令了。
+
+通过 `WORKDIR` 指定当前目录。
+
+然后通过 `COPY` 把 Dockerfile 同级目录下的内容复制到容器内，这里的 . 也就是 /app 目录
+
+之后通过 `RUN` 执行 npm install，全局安装 http-server
+
+通过 `EXPOSE` 指定要暴露的端口
+
+`CMD` 指定容器跑起来之后执行的命令，这里就是执行 http-server 把服务跑起来。
 
 

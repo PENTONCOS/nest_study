@@ -3,9 +3,13 @@ import { NestExpressApplication } from '@nestjs/platform-express'; // 默认使�
 // import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { MyLogger } from './MyLogger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    // logger: false // 关闭 打印日志
+    // logger: new MyLogger() // 自定义打印日志格式
+  });
   // const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
   // 分别指定静态资源的路径和模版的路径，并指定模版引擎为 handlerbars。
