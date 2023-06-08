@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFiles, HostParam, Req, Res, Next, HttpCode, Header, Redirect, Render } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFiles, HostParam, Req, Res, Next, HttpCode, Header, Redirect, Render, MaxFileSizeValidator, FileTypeValidator, ParseFilePipe } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { PersonService } from './person.service';
@@ -96,7 +96,12 @@ export class PersonController {
   @UseInterceptors(AnyFilesInterceptor({
     dest: 'uploads/', // 上传后文件所在路径
   }))
-  body(@Body() createPersonDto: CreatePersonDto, @UploadedFiles() files: Array<Express.Multer.File>) {
+  body(@Body() createPersonDto: CreatePersonDto, @UploadedFiles(new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 1000 }),
+      new FileTypeValidator({ fileType: 'image/jpeg' }),
+    ],
+  })) files: Array<Express.Multer.File>) {
     console.log(files);
     return `received: ${JSON.stringify(createPersonDto)}`
   }
