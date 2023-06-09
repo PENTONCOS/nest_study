@@ -514,7 +514,9 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 
 不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
 
-## 20. 快速入门 MySQL
+## 20. MySQL
+
+### 快速入门 MySQL
 
 mysql 分为 `server` 和 `client`，我们通过 docker 跑了一个 `mysql server`，指定了端口、数据卷，并通过 `MYSQL_ROOT_PASSWORD` 环境变量指定了 `root` 的密码。
 
@@ -530,7 +532,29 @@ mysql 分为 `server` 和 `client`，我们通过 docker 跑了一个 `mysql ser
 
 增删改数据的 `sql` 叫做 `DML`，而查询数据的 `sql` 叫做 `DQL`。
 
+### SQL 查询语句的所有语法和函数
 
+- where：查询条件，比如 where id=1
+- as：别名，比如 select xxx as 'yyy'
+- and: 连接多个条件
+- in/not in：集合查找，比如 where a in (1,2)
+- between and：区间查找，比如 where a between 1 and 10
+- limit：分页，比如 limit 0,5
+- order by：排序，可以指定先根据什么升序、如果相等再根据什么降序，比如 order by a desc,b asc
+- group by：分组，比如 group by aaa
+- having：分组之后再过滤，比如 group by aaa having xxx > 5
+- distinct：去重
+
+sql 还可以用很多内置函数：
+
+- 聚合函数：avg、count、sum、min、max
+- 字符串函数：concat、substr、length、upper、lower
+- 数值函数：round、ceil、floor、abs、mod
+- 日期函数：year、month、day、date、time
+- 条件函数：if、case
+- 系统函数：version、datebase、user
+- 类型转换函数：convert、cast、date_format、str_to_date
+- 其他函数：nullif、coalesce、greatest、least
 
 
 
