@@ -514,4 +514,23 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 
 不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
 
+## 20. 快速入门 MySQL
+
+mysql 分为 `server` 和 `client`，我们通过 docker 跑了一个 `mysql server`，指定了端口、数据卷，并通过 `MYSQL_ROOT_PASSWORD` 环境变量指定了 `root` 的密码。
+
+然后下载了 `mysql workbench` 这个官方的 `GUI 客户端`。
+
+可视化创建了一个 `database` 或者叫 `schema`。
+
+之后创建了一个表，指定了主键和其他列的约束、默认值等。
+
+之后学习了增删改查数据的可视化操作和对应的 `INSERT`、`DELETE`、`UPDATE`、`SELECT` 的 `sql` 语句。
+
+还有 `CREATE TABLE`、`TRUNCATE TABLE`、`DROP TABLE` 等语句，这些修改结构的 `sql` 叫做 `DDL`。
+
+增删改数据的 `sql` 叫做 `DML`，而查询数据的 `sql` 叫做 `DQL`。
+
+
+
+
 
