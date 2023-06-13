@@ -556,5 +556,20 @@ sql 还可以用很多内置函数：
 - 类型转换函数：convert、cast、date_format、str_to_date
 - 其他函数：nullif、coalesce、greatest、least
 
+### 一对一，join查询，联级方式
+
+查询的时候需要使用 `join on`，默认是 `inner join` 也就是只返回有关联的记录，也可以用 `left join`、`right join` 来额外返回没有关联记录的左表或右表的记录。
+
+`from` 后的是左表，`join` 后的是右表。
+
+此外，外键还可以设置级联方式，也就是主表修改 `id` 或者删除的时候，从表怎么做。
+
+有 `3` 种级联方式：
+- `CASCADE`（关联删除或更新）
+- `SET NULL`（关联外键设置为 null）
+- `RESTRICT` 或者 `NO ACTION`（没有从表的关联记录才可以删除或更新）
+
+
+
 
 
