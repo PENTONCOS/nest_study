@@ -591,5 +591,18 @@ sql 还可以用很多内置函数：
 
 子查询不止 `select` 可用，在 `update`、`insert`、`delete `里也可以用。
 
+### 事务和隔离级别
+
+事务内的几条 `sql` 要么全部成功，要么全部不成功，这样能保证数据的一致性。
+
+它的使用方式是 `START` `TRANSACTION`; `COMMIT`; 或者 `ROLLBACK`;
+
+还可以设置 `SAVEPOINT`，然后 `ROLLBACK TO SAVEPOINT`;
+
+事务还没提交的数据，别的事务能不能读取到，这就涉及到隔离级别的概念了。
+
+一般就用默认的隔离级别就行，也就是 `REPEATABLE READ`。
+
+
 
 
