@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
@@ -11,6 +12,8 @@ import { ServiceTestAService } from './service-test-a/service-test-a.service';
 import { DynamicModuleModule } from './dynamic-module/dynamic-module.module';
 import { DynamicModule2Module } from './dynamic-module2/dynamic-module2.module';
 import { CustomMiddlewareMiddleware } from './custom_middleware.middleware';
+import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
 
 @Module({
   // imports: [PersonModule],
@@ -26,7 +29,24 @@ import { CustomMiddlewareMiddleware } from './custom_middleware.middleware';
     DynamicModule2Module.register({
       name: 'henshao',
       age: 18,
-    })
+    }),
+    UserModule,
+    TypeOrmModule.forRoot({
+      type: "mysql",
+      host: "localhost",
+      port: 3308,
+      username: "root",
+      password: "jiapandong",
+      database: "typeorm_test",
+      synchronize: true,
+      logging: true,
+      entities: [User],
+      poolSize: 10,
+      connectorPackage: 'mysql2',
+      extra: {
+        authPlugin: 'sha256_password',
+      }
+    }),
   ],
   controllers: [AppController],
   // providers: [AppService],
