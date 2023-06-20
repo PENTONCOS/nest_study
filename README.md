@@ -724,3 +724,16 @@ sql 还可以用很多内置函数：
 通过 `redis` 的 `npm` 包（`redis`、`ioredis` 等）可以连接 `redis server` 并执行命令。
 
 如果在 `nest` 里，可以通过 `useFactory` 动态创建一个 `provider`，在里面使用 `redis` 的 `npm` 包创建连接。
+
+### 两种登录状态保存方式：JWT 和 Session
+
+`http` 是无状态的，也就是请求和请求之间没有关联，但我们很多功能的实现是需要保存状态的。
+
+给 `http` 添加状态有两种方式：
+
+1. `session + cookie`：把状态数据保存到服务端，`session id` 放到 `cookie` 里返回，这样每次请求会带上 `cookie` ，通过 `id` 来查找到对应的 `session`。这种方案有 `CSRF`、`分布式 session`、`跨域`的问题。
+
+2. `jwt`：把状态保存在 `json` 格式的 `token` 里，放到 `header` 中，需要手动带上，没有 `cookie + session` 的那些问题，但是也有安全性、性能、没法手动控制失效的问题。
+
+常用的方案基本是 `session + redis`、`jwt + redis` 这种。
+
