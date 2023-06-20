@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
@@ -48,6 +49,12 @@ import { createClient } from 'redis';
         authPlugin: 'sha256_password',
       }
     }),
+    JwtModule.register({
+      secret: 'jiapandong', // 加密 jwt 的密钥
+      signOptions: {
+        expiresIn: '7d' // token 过期时间 expiresIn，设置 7 天
+      }
+    })
   ],
   controllers: [AppController],
   // providers: [AppService],
