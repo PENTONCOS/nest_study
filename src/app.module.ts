@@ -14,6 +14,7 @@ import { DynamicModule2Module } from './dynamic-module2/dynamic-module2.module';
 import { CustomMiddlewareMiddleware } from './custom_middleware.middleware';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
+import { createClient } from 'redis';
 
 @Module({
   // imports: [PersonModule],
@@ -105,7 +106,20 @@ import { User } from './user/entities/user.entity';
       useExisting: 'person2' // 这里就是给 person2 的 token 的 provider 起个新的 token 叫做 person5。
     },
     ServiceTestBService,
-    ServiceTestAService
+    ServiceTestAService,
+    {
+      provide: 'REDIS_CLIENT',
+      async useFactory() {
+        const client = createClient({
+          socket: {
+            host: 'localhost',
+            port: 6379
+          }
+        });
+        await client.connect();
+        return client;
+      }
+    }
   ]
 })
 // export class AppModule implements NestModule {

@@ -36,6 +36,11 @@ export class AppController {
     @Inject('person5') private readonly person5: { name: string, dec: string },
   ) { }
 
+  @Get('hello11')
+  async getHello11() {
+    return await this.appService.getHello11();
+  }
+
   @Get()
   @SetMetadata('custom_decorator', 'admin')
   @UseGuards(CustomDecoratorGuard)

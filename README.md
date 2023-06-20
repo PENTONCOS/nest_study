@@ -623,7 +623,7 @@ sql 还可以用很多内置函数：
 
 主流的方案还是 `ORM` 的方案。
 
-## TypeORM
+## 21. TypeORM
 
 ### 入门
 
@@ -701,3 +701,26 @@ sql 还可以用很多内置函数：
 
 而 `TypeOrmModule.forFeature` 则会根据把传入 `Entity` 对应的 `Repository` 导出，这样就可以在模块内注入了。
 
+## 22. redis
+
+### 快速入门
+
+因为 `mysql` 存在硬盘，并且会执行 `sql` 的解析，会成为系统的性能瓶颈，所以我们要做一些优化。
+
+常见的就是在内存中缓存数据，使用 `redis` 这种内存数据库。
+
+它是 `key`、`value` 的格式存储的，`value` 有很多种类型，比如 `string`、`list`、`set`、`sorted` `set(zset)`、`hash`、`geo` 等。
+
+灵活运用这些数据结构，可以完成各种需求，比如排行榜用 `zset`、阅读数点赞数用 `string`、附近的人用 `geo` 等。
+
+而且这些 `key` 都可以设置过期时间，可以完成一些时效性相关的业务。
+
+用官方 GUI 工具 `RedisInsight` 可以可视化的操作它，很方便。
+
+`redis` 几乎和 `mysql` 一样是后端系统的必用中间件了，它除了用来做数据库的缓存外，还可以直接作为数据存储的地方。
+
+### 在 Nest 里操作 redis
+
+通过 `redis` 的 `npm` 包（`redis`、`ioredis` 等）可以连接 `redis server` 并执行命令。
+
+如果在 `nest` 里，可以通过 `useFactory` 动态创建一个 `provider`，在里面使用 `redis` 的 `npm` 包创建连接。
