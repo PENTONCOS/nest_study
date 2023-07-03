@@ -752,5 +752,6 @@ sql 还可以用很多内置函数：
 
 `token` 放在 `authorization` 的 `header` 里。
 
+## 23. MySQL + TypeORM + JWT 实现登录注册
 
-
+详见：[login-and-register](https://github.com/PENTONCOS/login-and-register/tree/main)
