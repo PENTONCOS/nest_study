@@ -775,3 +775,15 @@ sql 还可以用很多内置函数：
 但是这种方案查询数据库太频繁，需要用 `redis` 来做缓存。
 
 当然，你选择登录的时候把权限一并查出来放到 `session` 或者 `jwt` 里也是可以的。
+
+## 25. 如何动态读取不同环境的配置
+
+基于 `dotenv`、`js-yaml` 可以读取 `.env` 和 `yaml` 的配置文件。
+
+我们可以通过 `NODE_ENVIRONMENT` 来切换不同路径的配置文件，实现开发、生产环境的配置切换。
+
+`Nest` 提供了 `@nestjs/config` 包来封装，使用 `ConfigModule.forRoot` 可以读取 `.env` 配置文件，然后注入 `ConfigService` 来取配置。
+
+还可以通过 `ConfigModule.forFeature` 来注册局部配置。
+
+它的原理也很简单，就是通过 `useFactory` 动态产生 `provider`，然后在 `forRoot`、`forFeature` 里动态返回模块定义。

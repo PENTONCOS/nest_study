@@ -1,6 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { createClient } from 'redis';
+import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonModule } from './person/person.module';
@@ -15,11 +18,18 @@ import { DynamicModule2Module } from './dynamic-module2/dynamic-module2.module';
 import { CustomMiddlewareMiddleware } from './custom_middleware.middleware';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
-import { createClient } from 'redis';
+import config from './config';
+import config2 from './config2';
 
 @Module({
   // imports: [PersonModule],
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      // envFilePath: [path.join(process.cwd(), '.aaa.env'), path.join(process.cwd(), '.env')]
+      load: [config2, config]
+
+    }),
     PersonModule,
     Person2Module, Person3Module,
     Person4Module,
@@ -49,12 +59,22 @@ import { createClient } from 'redis';
         authPlugin: 'sha256_password',
       }
     }),
-    JwtModule.register({
-      secret: 'jiapandong', // 加密 jwt 的密钥
-      signOptions: {
-        expiresIn: '7d' // token 过期时间 expiresIn，设置 7 天
-      }
-    })
+    // JwtModule.register({
+    //   secret: 'jiapandong', // 加密 jwt 的密钥
+    //   signOptions: {
+    //     expiresIn: '7d' // token 过期时间 expiresIn，设置 7 天
+    //   }
+    // })
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('JWT_EXPIRES_IN'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   // providers: [AppService],
