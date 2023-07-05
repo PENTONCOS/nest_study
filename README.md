@@ -1,4 +1,6 @@
 # nest_study学习笔记
+
+# nest
 ## 1. 5种 HTTP数据传输方式
 用 axios 发送请求，使用 Nest 起后端服务，实现了 5 种 http/https 的数据传输方式：
 
@@ -437,200 +439,7 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 
 你可以把这个`自定义 Logger` 封装到**全局模块**，或者**动态模块**里。
 
-## 18. Dockerfile
-
-```dockerfile
-FROM node:latest
-
-WORKDIR /app
-
-COPY . .
-
-RUN npm config set registry https://registry.npmmirror.com
-
-RUN npm install -g http-server
-
-EXPOSE 8080
-
-CMD ["http-server", "-p", "8080"]
-```
-
-这些指令的含义如下：
-
-- FROM：基于一个基础镜像来修改
-- WORKDIR：指定当前工作目录
-- COPY：把容器外的内容复制到容器内
-- EXPOSE：声明当前容器要访问的网络端口，比如这里起服务会用到 8080
-- RUN：在容器内执行命令
-- CMD：容器启动的时候执行的命令
-
-我们先通过 `FROM` 继承了 node 基础镜像，里面就有 npm、node 这些命令了。
-
-通过 `WORKDIR` 指定当前目录。
-
-然后通过 `COPY` 把 Dockerfile 同级目录下的内容复制到容器内，这里的 . 也就是 /app 目录
-
-之后通过 `RUN` 执行 npm install，全局安装 http-server
-
-通过 `EXPOSE` 指定要暴露的端口
-
-`CMD` 指定容器跑起来之后执行的命令，这里就是执行 http-server 把服务跑起来。
-
-### Nest 项目如何编写 Dockerfile
-
-`docker build` 的时候会把构建上下文的所有文件打包发送给 `docker daemon` 来构建镜像。
-
-可以通过 `.dockerignore` 指定哪些文件不发送，这样能加快构建时间，减小镜像体积。
-
-此外，`多阶段构建`也能减小镜像体积，也就是 `build` 一个镜像、`production` 一个镜像，最终保留下 `production` 的镜像。
-
-### docker 的实现
-
-Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS` 这三种机制。
-
-- `Namespace`：做资源隔离。
-- `Control Group`：做容器的资源限制。
-- `UnionFS`：做文件系统的镜像存储、镜像合并。
-
-我们通过 `dockerfile` 描述镜像构建的过程，每一条指令都是一个镜像层。
-
-镜像通过 `docker run` 就可以跑起来，对外提供服务，这时会添加一个`可写层（容器层）`。
-
-挂载一个 `volume` 数据卷到 `Docker` 容器，就可以实现数据的持久化。
-
-![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aecb63016ab45c0bc2603071b65a420~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
-
-### docker 的技巧
-- 使用 alpine 的镜像，而不是默认的 linux 镜像，可以极大减小镜像体积，比如 node:18-alpine3.14 这种
-- 使用多阶段构建，比如一个阶段来执行 build，一个阶段把文件复制过去，跑起服务来，最后只保留最后一个阶段的镜像。这样使镜像内只保留运行需要的文件以及 dependencies。
-- 使用 ARG 增加构建灵活性，ARG 可以在 docker build 时通过 --build-arg xxx=yyy 传入，在 dockerfile 中生效，可以使构建过程更灵活。如果是想定义运行时可以访问的变量，可以通过 ENV 定义环境变量，值使用 ARG 传入。
-- CMD 和 ENTRYPOINT 都可以指定容器跑起来之后运行的命令，CMD 可以被覆盖，而 ENTRYPOINT 不可以，两者结合使用可以实现参数默认值的功能。
-- ADD 和 COPY 都可以复制文件到容器内，但是 ADD 处理 tar.gz 的时候，还会做一下解压。
-
-## 19. 为什么还需要pm2来跑node应用
-
-服务器上的 node 应用需要用 `pm2` 的**日志管理**、**进程管理**、**负载均衡**、**性能监控**等功能。
-
-分别对应 **pm2 logs**、**pm2 start/restart/stop/delete**、**pm2 start -i**、**pm2 monit** 等命令。
-
-多个应用或者想把启动选项保存下来的时候，可以通过 `ecosystem.config.js` 配置文件，批量启动一系列应用。
-
-把 `docker` 和 `pm2` 结合起来，在进程崩溃的时候让 `pm2` 来自动重启。
-
-只要写 `dockerfile` 的时候多安装一个 `pm2` 的依赖，然后把 `node` 换成 `p2-runtime` 就好了。
-
-不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
-
-## 20. MySQL
-
-### 快速入门 MySQL
-
-mysql 分为 `server` 和 `client`，我们通过 docker 跑了一个 `mysql server`，指定了端口、数据卷，并通过 `MYSQL_ROOT_PASSWORD` 环境变量指定了 `root` 的密码。
-
-然后下载了 `mysql workbench` 这个官方的 `GUI 客户端`。
-
-可视化创建了一个 `database` 或者叫 `schema`。
-
-之后创建了一个表，指定了主键和其他列的约束、默认值等。
-
-之后学习了增删改查数据的可视化操作和对应的 `INSERT`、`DELETE`、`UPDATE`、`SELECT` 的 `sql` 语句。
-
-还有 `CREATE TABLE`、`TRUNCATE TABLE`、`DROP TABLE` 等语句，这些修改结构的 `sql` 叫做 `DDL`。
-
-增删改数据的 `sql` 叫做 `DML`，而查询数据的 `sql` 叫做 `DQL`。
-
-### SQL 查询语句的所有语法和函数
-
-- where：查询条件，比如 where id=1
-- as：别名，比如 select xxx as 'yyy'
-- and: 连接多个条件
-- in/not in：集合查找，比如 where a in (1,2)
-- between and：区间查找，比如 where a between 1 and 10
-- limit：分页，比如 limit 0,5
-- order by：排序，可以指定先根据什么升序、如果相等再根据什么降序，比如 order by a desc,b asc
-- group by：分组，比如 group by aaa
-- having：分组之后再过滤，比如 group by aaa having xxx > 5
-- distinct：去重
-
-sql 还可以用很多内置函数：
-
-- 聚合函数：avg、count、sum、min、max
-- 字符串函数：concat、substr、length、upper、lower
-- 数值函数：round、ceil、floor、abs、mod
-- 日期函数：year、month、day、date、time
-- 条件函数：if、case
-- 系统函数：version、datebase、user
-- 类型转换函数：convert、cast、date_format、str_to_date
-- 其他函数：nullif、coalesce、greatest、least
-
-### 一对一，join查询，联级方式
-
-从表里通过外键来关联主表的主键。
-
-查询的时候需要使用 `join on`，默认是 `inner join` 也就是只返回有关联的记录，也可以用 `left join`、`right join` 来额外返回没有关联记录的左表或右表的记录。
-
-`from` 后的是左表，`join` 后的是右表。
-
-此外，外键还可以设置级联方式，也就是主表修改 `id` 或者删除的时候，从表怎么做。
-
-有 `3` 种级联方式：
-- `CASCADE`（关联删除或更新）
-- `SET NULL`（关联外键设置为 null）
-- `RESTRICT` 或者 `NO ACTION`（没有从表的关联记录才可以删除或更新）
-
-### 一对多、多对多关系的表设计
-
-我们创建了部门、员工表，并在员工表添加了引用部门 `id` 的外键 `department_id` 来保存这种一堆多关系。
-
-并且设置了级联方式为 `set null`。
-
-创建了文章表、标签表、文章标签表来保存多堆多关系，多对多不需要在双方保存彼此的外键，只要在中间表里维护这种关系即可。
-
-中间表的外键级联方式一定为 `CASCADE`，因为数据没了关系就没必要还留着了。
-
-此外，多对多的 `join` 需要连接 `3` 个表来查询。
-
-### 子查询和EXISTS
-
-`sql` 和 `sql` 可以组合来完成更复杂的功能，这种语法叫做`子查询`。
-
-它还有个特有的关键字 `EXISTS`（和 `NOT EXISTS`），当子查询有返回结果的时候成立，没有返回结果的时候不成立。
-
-子查询不止 `select` 可用，在 `update`、`insert`、`delete `里也可以用。
-
-### 事务和隔离级别
-
-事务内的几条 `sql` 要么全部成功，要么全部不成功，这样能保证数据的一致性。
-
-它的使用方式是 `START` `TRANSACTION`; `COMMIT`; 或者 `ROLLBACK`;
-
-还可以设置 `SAVEPOINT`，然后 `ROLLBACK TO SAVEPOINT`;
-
-事务还没提交的数据，别的事务能不能读取到，这就涉及到隔离级别的概念了。
-
-一般就用默认的隔离级别就行，也就是 `REPEATABLE READ`。
-
-### mysql 里的视图、存储过程和函数
-
-![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97557d444a2446769c21b93976c58121~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
-
-`视图`就是把查询结果保存下来，可以对这个`视图`做查询，简化了查询语句并且也能隐藏一些字段。它增删改的限制比较多，一般只是来做查询。
-
-`存储`过程就是把一段 sql 封装起来，传参数调用。
-
-`函数`也是把一段 sql 或者其他逻辑封装起来，传参数调用，但是它还有返回值。
-
-一般不建议在正式环境使用视图，存储过程和函数；使用数据库来解决问题，就有可能把业务逻辑写到了数据库层，后续维护及其麻烦；
-
-### Node 里操作 MySQL 的两种方式
-
-一种是直接用 `mysql2` 连接数据库，发送 `sql` 来执行。
-
-一种是用 `ORM` 库，比如 `typeorm`，它是基于 `class` 和 `class` 上的装饰器来声明和表的映射关系的，然后对表的增删改查就变成了对象的操作以及 `save`、`find` 等方法的调用。它会自动生成对应的 `sql`。
-
-主流的方案还是 `ORM` 的方案。
-
-## 21. TypeORM
+## 18. TypeORM
 
 ### 入门
 
@@ -708,31 +517,9 @@ sql 还可以用很多内置函数：
 
 而 `TypeOrmModule.forFeature` 则会根据把传入 `Entity` 对应的 `Repository` 导出，这样就可以在模块内注入了。
 
-## 22. redis
 
-### 快速入门
 
-因为 `mysql` 存在硬盘，并且会执行 `sql` 的解析，会成为系统的性能瓶颈，所以我们要做一些优化。
-
-常见的就是在内存中缓存数据，使用 `redis` 这种内存数据库。
-
-它是 `key`、`value` 的格式存储的，`value` 有很多种类型，比如 `string`、`list`、`set`、`sorted` `set(zset)`、`hash`、`geo` 等。
-
-灵活运用这些数据结构，可以完成各种需求，比如排行榜用 `zset`、阅读数点赞数用 `string`、附近的人用 `geo` 等。
-
-而且这些 `key` 都可以设置过期时间，可以完成一些时效性相关的业务。
-
-用官方 GUI 工具 `RedisInsight` 可以可视化的操作它，很方便。
-
-`redis` 几乎和 `mysql` 一样是后端系统的必用中间件了，它除了用来做数据库的缓存外，还可以直接作为数据存储的地方。
-
-### 在 Nest 里操作 redis
-
-通过 `redis` 的 `npm` 包（`redis`、`ioredis` 等）可以连接 `redis server` 并执行命令。
-
-如果在 `nest` 里，可以通过 `useFactory` 动态创建一个 `provider`，在里面使用 `redis` 的 `npm` 包创建连接。
-
-### 两种登录状态保存方式：JWT 和 Session
+## 19. 两种登录状态保存方式：JWT 和 Session
 
 `http` 是无状态的，也就是请求和请求之间没有关联，但我们很多功能的实现是需要保存状态的。
 
@@ -744,7 +531,7 @@ sql 还可以用很多内置函数：
 
 常用的方案基本是 `session + redis`、`jwt + redis` 这种。
 
-### Nest 里实现 JWT 和 Session
+## 20. Nest 里实现 JWT 和 Session
 
 `session` 使用的是 `express` 的 `express-session` 中间件，通过 `@Session` 装饰器取出来传入 `controller` 里。
 
@@ -752,11 +539,11 @@ sql 还可以用很多内置函数：
 
 `token` 放在 `authorization` 的 `header` 里。
 
-## 23. MySQL + TypeORM + JWT 实现登录注册
+## 21. MySQL + TypeORM + JWT 实现登录注册
 
 详见：[login-and-register](https://github.com/PENTONCOS/login-and-register/tree/main)
 
-## 24. 基于 ACL 实现的权限控制
+## 22. 基于 ACL 实现的权限控制
 
 有的接口除了需要登录外，还需要权限。
 
@@ -776,7 +563,7 @@ sql 还可以用很多内置函数：
 
 当然，你选择登录的时候把权限一并查出来放到 `session` 或者 `jwt` 里也是可以的。
 
-## 25. 如何动态读取不同环境的配置
+## 23. 如何动态读取不同环境的配置
 
 基于 `dotenv`、`js-yaml` 可以读取 `.env` 和 `yaml` 的配置文件。
 
@@ -787,3 +574,223 @@ sql 还可以用很多内置函数：
 还可以通过 `ConfigModule.forFeature` 来注册局部配置。
 
 它的原理也很简单，就是通过 `useFactory` 动态产生 `provider`，然后在 `forRoot`、`forFeature` 里动态返回模块定义。
+
+
+# docker
+
+## 1. Dockerfile
+
+```dockerfile
+FROM node:latest
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm config set registry https://registry.npmmirror.com
+
+RUN npm install -g http-server
+
+EXPOSE 8080
+
+CMD ["http-server", "-p", "8080"]
+```
+
+这些指令的含义如下：
+
+- FROM：基于一个基础镜像来修改
+- WORKDIR：指定当前工作目录
+- COPY：把容器外的内容复制到容器内
+- EXPOSE：声明当前容器要访问的网络端口，比如这里起服务会用到 8080
+- RUN：在容器内执行命令
+- CMD：容器启动的时候执行的命令
+
+我们先通过 `FROM` 继承了 node 基础镜像，里面就有 npm、node 这些命令了。
+
+通过 `WORKDIR` 指定当前目录。
+
+然后通过 `COPY` 把 Dockerfile 同级目录下的内容复制到容器内，这里的 . 也就是 /app 目录
+
+之后通过 `RUN` 执行 npm install，全局安装 http-server
+
+通过 `EXPOSE` 指定要暴露的端口
+
+`CMD` 指定容器跑起来之后执行的命令，这里就是执行 http-server 把服务跑起来。
+
+### Nest 项目如何编写 Dockerfile
+
+`docker build` 的时候会把构建上下文的所有文件打包发送给 `docker daemon` 来构建镜像。
+
+可以通过 `.dockerignore` 指定哪些文件不发送，这样能加快构建时间，减小镜像体积。
+
+此外，`多阶段构建`也能减小镜像体积，也就是 `build` 一个镜像、`production` 一个镜像，最终保留下 `production` 的镜像。
+
+## 2. docker 的实现
+
+Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS` 这三种机制。
+
+- `Namespace`：做资源隔离。
+- `Control Group`：做容器的资源限制。
+- `UnionFS`：做文件系统的镜像存储、镜像合并。
+
+我们通过 `dockerfile` 描述镜像构建的过程，每一条指令都是一个镜像层。
+
+镜像通过 `docker run` 就可以跑起来，对外提供服务，这时会添加一个`可写层（容器层）`。
+
+挂载一个 `volume` 数据卷到 `Docker` 容器，就可以实现数据的持久化。
+
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aecb63016ab45c0bc2603071b65a420~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
+
+## 3. docker 的技巧
+- 使用 alpine 的镜像，而不是默认的 linux 镜像，可以极大减小镜像体积，比如 node:18-alpine3.14 这种
+- 使用多阶段构建，比如一个阶段来执行 build，一个阶段把文件复制过去，跑起服务来，最后只保留最后一个阶段的镜像。这样使镜像内只保留运行需要的文件以及 dependencies。
+- 使用 ARG 增加构建灵活性，ARG 可以在 docker build 时通过 --build-arg xxx=yyy 传入，在 dockerfile 中生效，可以使构建过程更灵活。如果是想定义运行时可以访问的变量，可以通过 ENV 定义环境变量，值使用 ARG 传入。
+- CMD 和 ENTRYPOINT 都可以指定容器跑起来之后运行的命令，CMD 可以被覆盖，而 ENTRYPOINT 不可以，两者结合使用可以实现参数默认值的功能。
+- ADD 和 COPY 都可以复制文件到容器内，但是 ADD 处理 tar.gz 的时候，还会做一下解压。
+
+## 4. 为什么还需要pm2来跑node应用
+
+服务器上的 node 应用需要用 `pm2` 的**日志管理**、**进程管理**、**负载均衡**、**性能监控**等功能。
+
+分别对应 **pm2 logs**、**pm2 start/restart/stop/delete**、**pm2 start -i**、**pm2 monit** 等命令。
+
+多个应用或者想把启动选项保存下来的时候，可以通过 `ecosystem.config.js` 配置文件，批量启动一系列应用。
+
+把 `docker` 和 `pm2` 结合起来，在进程崩溃的时候让 `pm2` 来自动重启。
+
+只要写 `dockerfile` 的时候多安装一个 `pm2` 的依赖，然后把 `node` 换成 `p2-runtime` 就好了。
+
+不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
+
+# MySQL
+
+## 1. 快速入门 MySQL
+
+mysql 分为 `server` 和 `client`，我们通过 docker 跑了一个 `mysql server`，指定了端口、数据卷，并通过 `MYSQL_ROOT_PASSWORD` 环境变量指定了 `root` 的密码。
+
+然后下载了 `mysql workbench` 这个官方的 `GUI 客户端`。
+
+可视化创建了一个 `database` 或者叫 `schema`。
+
+之后创建了一个表，指定了主键和其他列的约束、默认值等。
+
+之后学习了增删改查数据的可视化操作和对应的 `INSERT`、`DELETE`、`UPDATE`、`SELECT` 的 `sql` 语句。
+
+还有 `CREATE TABLE`、`TRUNCATE TABLE`、`DROP TABLE` 等语句，这些修改结构的 `sql` 叫做 `DDL`。
+
+增删改数据的 `sql` 叫做 `DML`，而查询数据的 `sql` 叫做 `DQL`。
+
+## 2. SQL 查询语句的所有语法和函数
+
+- where：查询条件，比如 where id=1
+- as：别名，比如 select xxx as 'yyy'
+- and: 连接多个条件
+- in/not in：集合查找，比如 where a in (1,2)
+- between and：区间查找，比如 where a between 1 and 10
+- limit：分页，比如 limit 0,5
+- order by：排序，可以指定先根据什么升序、如果相等再根据什么降序，比如 order by a desc,b asc
+- group by：分组，比如 group by aaa
+- having：分组之后再过滤，比如 group by aaa having xxx > 5
+- distinct：去重
+
+sql 还可以用很多内置函数：
+
+- 聚合函数：avg、count、sum、min、max
+- 字符串函数：concat、substr、length、upper、lower
+- 数值函数：round、ceil、floor、abs、mod
+- 日期函数：year、month、day、date、time
+- 条件函数：if、case
+- 系统函数：version、datebase、user
+- 类型转换函数：convert、cast、date_format、str_to_date
+- 其他函数：nullif、coalesce、greatest、least
+
+## 3. 一对一，join查询，联级方式
+
+从表里通过外键来关联主表的主键。
+
+查询的时候需要使用 `join on`，默认是 `inner join` 也就是只返回有关联的记录，也可以用 `left join`、`right join` 来额外返回没有关联记录的左表或右表的记录。
+
+`from` 后的是左表，`join` 后的是右表。
+
+此外，外键还可以设置级联方式，也就是主表修改 `id` 或者删除的时候，从表怎么做。
+
+有 `3` 种级联方式：
+- `CASCADE`（关联删除或更新）
+- `SET NULL`（关联外键设置为 null）
+- `RESTRICT` 或者 `NO ACTION`（没有从表的关联记录才可以删除或更新）
+
+## 4. 一对多、多对多关系的表设计
+
+我们创建了部门、员工表，并在员工表添加了引用部门 `id` 的外键 `department_id` 来保存这种一堆多关系。
+
+并且设置了级联方式为 `set null`。
+
+创建了文章表、标签表、文章标签表来保存多堆多关系，多对多不需要在双方保存彼此的外键，只要在中间表里维护这种关系即可。
+
+中间表的外键级联方式一定为 `CASCADE`，因为数据没了关系就没必要还留着了。
+
+此外，多对多的 `join` 需要连接 `3` 个表来查询。
+
+## 5. 子查询和EXISTS
+
+`sql` 和 `sql` 可以组合来完成更复杂的功能，这种语法叫做`子查询`。
+
+它还有个特有的关键字 `EXISTS`（和 `NOT EXISTS`），当子查询有返回结果的时候成立，没有返回结果的时候不成立。
+
+子查询不止 `select` 可用，在 `update`、`insert`、`delete `里也可以用。
+
+## 6. 事务和隔离级别
+
+事务内的几条 `sql` 要么全部成功，要么全部不成功，这样能保证数据的一致性。
+
+它的使用方式是 `START` `TRANSACTION`; `COMMIT`; 或者 `ROLLBACK`;
+
+还可以设置 `SAVEPOINT`，然后 `ROLLBACK TO SAVEPOINT`;
+
+事务还没提交的数据，别的事务能不能读取到，这就涉及到隔离级别的概念了。
+
+一般就用默认的隔离级别就行，也就是 `REPEATABLE READ`。
+
+## 7. mysql 里的视图、存储过程和函数
+
+![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97557d444a2446769c21b93976c58121~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
+
+`视图`就是把查询结果保存下来，可以对这个`视图`做查询，简化了查询语句并且也能隐藏一些字段。它增删改的限制比较多，一般只是来做查询。
+
+`存储`过程就是把一段 sql 封装起来，传参数调用。
+
+`函数`也是把一段 sql 或者其他逻辑封装起来，传参数调用，但是它还有返回值。
+
+一般不建议在正式环境使用视图，存储过程和函数；使用数据库来解决问题，就有可能把业务逻辑写到了数据库层，后续维护及其麻烦；
+
+## 8. Node 里操作 MySQL 的两种方式
+
+一种是直接用 `mysql2` 连接数据库，发送 `sql` 来执行。
+
+一种是用 `ORM` 库，比如 `typeorm`，它是基于 `class` 和 `class` 上的装饰器来声明和表的映射关系的，然后对表的增删改查就变成了对象的操作以及 `save`、`find` 等方法的调用。它会自动生成对应的 `sql`。
+
+主流的方案还是 `ORM` 的方案。
+
+# redis
+
+## 1. 快速入门
+
+因为 `mysql` 存在硬盘，并且会执行 `sql` 的解析，会成为系统的性能瓶颈，所以我们要做一些优化。
+
+常见的就是在内存中缓存数据，使用 `redis` 这种内存数据库。
+
+它是 `key`、`value` 的格式存储的，`value` 有很多种类型，比如 `string`、`list`、`set`、`sorted` `set(zset)`、`hash`、`geo` 等。
+
+灵活运用这些数据结构，可以完成各种需求，比如排行榜用 `zset`、阅读数点赞数用 `string`、附近的人用 `geo` 等。
+
+而且这些 `key` 都可以设置过期时间，可以完成一些时效性相关的业务。
+
+用官方 GUI 工具 `RedisInsight` 可以可视化的操作它，很方便。
+
+`redis` 几乎和 `mysql` 一样是后端系统的必用中间件了，它除了用来做数据库的缓存外，还可以直接作为数据存储的地方。
+
+## 2. 在 Nest 里操作 redis
+
+通过 `redis` 的 `npm` 包（`redis`、`ioredis` 等）可以连接 `redis server` 并执行命令。
+
+如果在 `nest` 里，可以通过 `useFactory` 动态创建一个 `provider`，在里面使用 `redis` 的 `npm` 包创建连接。
