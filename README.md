@@ -576,7 +576,7 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 它的原理也很简单，就是通过 `useFactory` 动态产生 `provider`，然后在 `forRoot`、`forFeature` 里动态返回模块定义。
 
 
-# docker
+# Docker
 
 ## 1. Dockerfile
 
@@ -625,7 +625,7 @@ CMD ["http-server", "-p", "8080"]
 
 此外，`多阶段构建`也能减小镜像体积，也就是 `build` 一个镜像、`production` 一个镜像，最终保留下 `production` 的镜像。
 
-## 2. docker 的实现
+## 2. Docker 的实现
 
 Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS` 这三种机制。
 
@@ -641,16 +641,26 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 
 ![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aecb63016ab45c0bc2603071b65a420~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
 
-## 3. docker 的技巧
+## 3. Docker 的技巧
 - 使用 alpine 的镜像，而不是默认的 linux 镜像，可以极大减小镜像体积，比如 node:18-alpine3.14 这种
 - 使用多阶段构建，比如一个阶段来执行 build，一个阶段把文件复制过去，跑起服务来，最后只保留最后一个阶段的镜像。这样使镜像内只保留运行需要的文件以及 dependencies。
 - 使用 ARG 增加构建灵活性，ARG 可以在 docker build 时通过 --build-arg xxx=yyy 传入，在 dockerfile 中生效，可以使构建过程更灵活。如果是想定义运行时可以访问的变量，可以通过 ENV 定义环境变量，值使用 ARG 传入。
 - CMD 和 ENTRYPOINT 都可以指定容器跑起来之后运行的命令，CMD 可以被覆盖，而 ENTRYPOINT 不可以，两者结合使用可以实现参数默认值的功能。
 - ADD 和 COPY 都可以复制文件到容器内，但是 ADD 处理 tar.gz 的时候，还会做一下解压。
 
-## 4. 为什么还需要pm2来跑node应用
+## 4. 为什么还需要 pm2 来跑 node 应用
 
-服务器上的 node 应用需要用 `pm2` 的**日志管理**、**进程管理**、**负载均衡**、**性能监控**等功能。
+`pm2` 是一个进程管理工具，用于在生产环境中管理和监控 `Node.js` 应用程序。它可以帮助你启动、停止、重启和监视多个 `Node.js` 进程，并提供了日志记录、负载均衡、故障自动恢复等功能。`pm2` 可以确保应用程序的高可用性和稳定性，并方便地进行日志管理和监控。
+
+一些常见的 `pm2` 命令包括：
+
+- `pm2 start app.js` - 启动应用程序
+- `pm2 stop app.js` - 停止应用程序
+- `pm2 restart app.js` - 重启应用程序
+- `pm2 list` - 显示当前运行的所有应用程序
+- `pm2 logs` - 显示应用程序的日志
+
+服务器上的 `node` 应用需要用 `pm2` 的**日志管理**、**进程管理**、**负载均衡**、**性能监控**等功能。
 
 分别对应 **pm2 logs**、**pm2 start/restart/stop/delete**、**pm2 start -i**、**pm2 monit** 等命令。
 
@@ -661,6 +671,35 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 只要写 `dockerfile` 的时候多安装一个 `pm2` 的依赖，然后把 `node` 换成 `p2-runtime` 就好了。
 
 不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
+
+## 5. 为什么要使用 Docker Compose
+
+`docker-compose` 是一个用于定义和运行多个容器化应用程序的工具。它使用 `YAML` 文件来定义应用程序的配置，包括服务、网络、存储卷等。通过 `docker-compose`，可以轻松地将多个相关的容器组合在一起，并实现它们之间的通信和协作。
+
+使用 `docker-compose` 可以更方便地管理复杂的应用程序栈，而不必手动管理每个容器。它可以自动创建、启动、停止和删除容器，并提供了一致的环境配置和依赖管理。
+
+一些常见的 `docker-compose` 命令包括：
+
+- `docker-compose up` - 启动应用程序
+- `docker-compose down` - 停止应用程序并删除容器
+- `docker-compose restart` - 重启应用程序
+- `docker-compose ps` - 显示当前运行的所有容器
+- `docker-compose logs` - 显示应用程序的日志
+
+通过 `docker`、`docker-compose` 两种方式来部署了 `nest` 项目。
+
+`docker` 的方式需要手动 `docker build` 来构建 `nest` 应用的镜像。
+
+然后按顺序使用 `docker run` 来跑 `mysql`、`redis`、`nest` 容器。
+
+（要注意 `nest` 容器里需要使用宿主机 `ip` 来访问 `mysql`、`redis` 服务）
+
+而 `docker compose` 就只需要写一个 `docker-compose.yml` 文件，配置多个 `service` 的启动方式和 `depends_on` 依赖顺序。
+
+然后 `docker-compose up` 就可以批量按顺序启动一批容器。
+
+基本上，我们跑 `Nest` 项目都会依赖别的服务，所以在单台机器跑的时候都是需要用 `Docker Compose` 的。
+
 
 # MySQL
 
@@ -751,7 +790,7 @@ sql 还可以用很多内置函数：
 
 一般就用默认的隔离级别就行，也就是 `REPEATABLE READ`。
 
-## 7. mysql 里的视图、存储过程和函数
+## 7. MySQL 里的视图、存储过程和函数
 
 ![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97557d444a2446769c21b93976c58121~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?)
 
@@ -771,7 +810,7 @@ sql 还可以用很多内置函数：
 
 主流的方案还是 `ORM` 的方案。
 
-# redis
+# Redis
 
 ## 1. 快速入门
 
@@ -789,7 +828,7 @@ sql 还可以用很多内置函数：
 
 `redis` 几乎和 `mysql` 一样是后端系统的必用中间件了，它除了用来做数据库的缓存外，还可以直接作为数据存储的地方。
 
-## 2. 在 Nest 里操作 redis
+## 2. 在 Nest 里操作 Redis
 
 通过 `redis` 的 `npm` 包（`redis`、`ioredis` 等）可以连接 `redis server` 并执行命令。
 

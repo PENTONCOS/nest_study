@@ -1,0 +1,22 @@
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    ports:
+      - '3000:3000'
+  mysql-container:
+    image: mysql
+    ports:
+      - '3308:3306'
+    volumes:
+      - /Users/cospeyton/Desktop/mysql_test1
+  redis-container:
+    image: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - /Users/cospeyton/Desktop/redis_test
