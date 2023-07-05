@@ -4,9 +4,9 @@ import { join } from 'path';
 
 
 export default async () => {
-  const configFilePath = join(process.cwd(), 'aaa.yaml');
+  // const configFilePath = join(process.cwd(), 'aaa.yaml');
 
-  const config = await readFile(configFilePath);
+  // const config = await readFile(configFilePath);
 
-  return yaml.load(config);
+  // return yaml.load(config);
 };

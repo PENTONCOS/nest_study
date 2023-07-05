@@ -672,6 +672,25 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 
 不管是出于稳定性、性能还是可观测性等目的，`pm2` 都是必不可少的。
 
+### Docker 支持重启策略，是否还需要 PM2？
+
+`Docker` 是支持自动重启的，可以在 `docker run` 的时候通过 `--restart` 指定重启策略，或者 `Docker Compose` 配置文件里配置 `restart`。
+
+有 `4` 种重启策略：
+
+- `no`: 容器退出不自动重启（默认值）
+- `always`：容器退出总是自动重启，除非 `docker stop`。
+- `on-failure`：容器非正常退出才自动重启，还可以指定重启次数，如 `on-failure:5`
+- `unless-stopped`：容器退出总是自动重启，除非 `docker stop`
+  
+重启策略为 `always` 的容器在 `Docker Deamon` 重启的时候容器也会重启，而 `unless-stopped` 的不会。
+
+其实我们用 `PM2` 也是主要用它进程崩溃的时候重启的功能，而在有了 `Docker` 之后，用它的必要性就不大了。
+
+当然，进程重启的速度肯定是比容器重启的速度快一些的，如果只是 `Docker` 部署，可以结合 `pm2-runtime` 来做进程的重启。
+
+绝大多数情况下，直接用 `Docker` 跑 `node` 脚本就行，不需要 `PM2`。
+
 ## 5. 为什么要使用 Docker Compose
 
 `docker-compose` 是一个用于定义和运行多个容器化应用程序的工具。它使用 `YAML` 文件来定义应用程序的配置，包括服务、网络、存储卷等。通过 `docker-compose`，可以轻松地将多个相关的容器组合在一起，并实现它们之间的通信和协作。
@@ -699,6 +718,24 @@ Docker 的实现原理依赖 linux 的 `Namespace`、`Control Group`、`UnionFS`
 然后 `docker-compose up` 就可以批量按顺序启动一批容器。
 
 基本上，我们跑 `Nest` 项目都会依赖别的服务，所以在单台机器跑的时候都是需要用 `Docker Compose` 的。
+
+## 6. Docker 容器通信的最简单方式：桥接网络
+
+一般把 `mysql`、`redis` 的端口映射到宿主机，然后 `nest` 的容器里通过宿主机 `ip` 访问这两个服务的。
+
+但其实有更方便的方式，就是桥接网络。
+
+通过 `docker network create` 创建一个桥接网络，然后 `docker run` 的时候指定 `--network`，这样 3 个容器就可以通过容器名互相访问了。
+
+在 `docker-compose.yml` 配置下 `networks` 创建桥接网络，然后添加到不同的 `service` 上即可。
+
+或者不配置 `networkds`，`docker-compose` 会生成一个默认的。
+
+实现原理就是对 `Network Namespace` 的处理，本来是 `3` 个独立的 `Namespace`，当指定了 `network` 桥接网络，就可以在 `Namespace` 下访问别的 `Namespace` 了。
+
+多个容器之间的通信方式，用桥接网络是最简便的。
+
+
 
 
 # MySQL

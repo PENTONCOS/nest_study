@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { createClient } from 'redis';
 import * as path from 'path';
@@ -19,7 +19,7 @@ import { CustomMiddlewareMiddleware } from './custom_middleware.middleware';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import config from './config';
-import config2 from './config2';
+// import config2 from './config2';
 
 @Module({
   // imports: [PersonModule],
@@ -27,7 +27,8 @@ import config2 from './config2';
     ConfigModule.forRoot({
       isGlobal: true,
       // envFilePath: [path.join(process.cwd(), '.aaa.env'), path.join(process.cwd(), '.env')]
-      load: [config2, config]
+      // load: [config2, config]
+      load: [config]
 
     }),
     PersonModule,
@@ -45,8 +46,9 @@ import config2 from './config2';
     UserModule,
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: "localhost",
-      port: 3308,
+      // host: "localhost",
+      host: "mysql-container",
+      port: 3306,
       username: "root",
       password: "jiapandong",
       database: "typeorm_test",
@@ -59,22 +61,22 @@ import config2 from './config2';
         authPlugin: 'sha256_password',
       }
     }),
-    // JwtModule.register({
-    //   secret: 'jiapandong', // 加密 jwt 的密钥
-    //   signOptions: {
-    //     expiresIn: '7d' // token 过期时间 expiresIn，设置 7 天
-    //   }
-    // })
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get('JWT_EXPIRES_IN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    JwtModule.register({
+      secret: 'jiapandong', // 加密 jwt 的密钥
+      signOptions: {
+        expiresIn: '7d' // token 过期时间 expiresIn，设置 7 天
+      }
+    })
+    // JwtModule.registerAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     secret: configService.get('JWT_SECRET'),
+    //     signOptions: {
+    //       expiresIn: configService.get('JWT_EXPIRES_IN'),
+    //     },
+    //   }),
+    //   inject: [ConfigService],
+    // }),
   ],
   controllers: [AppController],
   // providers: [AppService],
@@ -139,7 +141,8 @@ import config2 from './config2';
       async useFactory() {
         const client = createClient({
           socket: {
-            host: 'localhost',
+            // host: 'localhost',
+            host: 'redis-container',
             port: 6379
           }
         });
