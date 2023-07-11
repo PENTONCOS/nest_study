@@ -541,9 +541,11 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 
 ## 21. MySQL + TypeORM + JWT 实现登录注册
 
-详见：[login-and-register](https://github.com/PENTONCOS/login-and-register/tree/main)
+[demo地址](https://github.com/PENTONCOS/login-and-register/tree/main/jwt-mysql-typeorm)
 
 ## 22. 基于 ACL 实现的权限控制
+
+[demo地址](https://github.com/PENTONCOS/login-and-register/tree/main/seesion-mysql-typeorm)
 
 有的接口除了需要登录外，还需要权限。
 
@@ -577,6 +579,8 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 
 ## 24. 基于 RBAC 实现权限控制
 
+[demo地址](https://github.com/PENTONCOS/login-and-register/tree/main/rbac)
+
 `RBAC（role based access control）` 权限控制，它相比于 `ACL （access control list）`的方式，多了一层角色，给用户分配角色而不是直接分配权限。
 
 当然，检查权限的时候还是要把角色的权限合并之后再检查是否有需要的权限的。
@@ -600,6 +604,7 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 当然，这是 `RBAC0` 的方案，更复杂一点的权限模型，可能会用 `RBAC1`、`RBAC2` 等，那个就是多角色继承、用户组、角色之间互斥之类的概念，会了 `RBAC0`，那些也就是做一些变形的事情。
 
 绝大多数系统，用 `RBAC0` 就足够了。
+
 
 
 # Docker
