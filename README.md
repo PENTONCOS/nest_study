@@ -607,6 +607,8 @@ Nest 的文件上传也是基于 `multer` 实现的，它对 `multer api` 封装
 
 ## 25. 基于 access_token 和 refresh_token 实现无感刷新登录状态
 
+[demo地址](https://github.com/PENTONCOS/login-and-register-nest/tree/main/refresh-token)
+
 `access_token` 用于身份认证，`refresh_token` 用于刷新 `token`，也就是续签。
 
 在登录接口里同时返回 `access_token` 和 `refresh_token`，`access_token` 设置较短的过期时间，比如 `30` 分钟，`refresh_token` 设置较长的过期时间，比如 `7` 天。
