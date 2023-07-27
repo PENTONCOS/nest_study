@@ -916,3 +916,16 @@ sql 还可以用很多内置函数：
 通过 `redis` 的 `npm` 包（`redis`、`ioredis` 等）可以连接 `redis server` 并执行命令。
 
 如果在 `nest` 里，可以通过 `useFactory` 动态创建一个 `provider`，在里面使用 `redis` 的 `npm` 包创建连接。
+
+## 3. 基于 Redis 实现分布式 session
+
+[demo地址](https://github.com/PENTONCOS/login-and-register-nest/tree/main/seesion-distributed-redis)
+
+- `session` 是在服务端内存存储会话数据，通过 `cookie` 中的 `session id` 关联。但它不支持分布式，换台机器就不行了。
+
+- `jwt` 是在客户端存储会话数据，所以天然支持分布式。
+
+- 可以通过 `redis` 自己实现了分布式的 `session`。
+  - 我们使用的是 `hash` 的数据结构，封装了 `RedisModule` 来操作 `Redis`。
+  - 又封装了 `SessionModule` 来读写 `redis` 中的 `session`，以 `sid_xxx` 为 key。
+  - 在 `controller` 里就可以读取和设置 `session` 了，用起来和内置的传统 `session` 差不多。但是它是支持分布式的。
